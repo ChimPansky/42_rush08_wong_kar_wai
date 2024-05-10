@@ -9,7 +9,7 @@ CC = cc
 CFLAGS = -Wall -Wextra -Werror
 CFLAGS += -MMD -g
 
-IFLAGS =
+IFLAGS = -Iinclude
 LFLAGS = -lncursesw
 #MAKEFLAGS	= -j$(nproc) --no-print-directory
 
@@ -25,7 +25,8 @@ lft:
 	@make -C libft all clean
 
 CFILES += \
-	ft_2048.c
+	ft_2048.c \
+	game.c
 
 SRC = $(addprefix $(SOURCE_DIR)/,$(CFILES))
 OBJ = $(SRC:%.c=$(BUILD_DIR)/%.o)

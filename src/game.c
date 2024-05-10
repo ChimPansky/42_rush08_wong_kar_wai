@@ -5,7 +5,7 @@ void	game_init(t_game *game)
 	(void)game;
 }
 
-void	game_destory(t_game *game)
+void	game_destroy(t_game *game)
 {
 	(void)game;
 }
