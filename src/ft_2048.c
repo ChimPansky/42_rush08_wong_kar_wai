@@ -1,7 +1,5 @@
 #include "2048.h"
 
-#include "game.c"
-
 int	main(void)
 {
 	t_game	game = {};
