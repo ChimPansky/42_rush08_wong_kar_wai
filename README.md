@@ -27,11 +27,11 @@ Key features:
 	- for down: the row-index is increased by one
 	- for left: the col-index is decreased by one
 	- for right: the col-index is increased by one
-- a move is only valid if the sliding will result in at least one number merge
+- a move is only valid if at least one number in the grid can actually slide
 - number merging: if after the sliding, 2 adjacent squares have the same number, they merge into one square with the new number having double the  original value (2-2 -> 4; 8-8 -> 16;...)
 - the merging only happens if the neighboring direction matches the sliding direction; for left right its horizontal and for updown its vertical.
-- per move and row/col only 1 merge can happen
-- if after sliding more than 2 adjacent squares have the same number, only the 2 "furthest away" in the sliding direction will merge
+- per move and row/col only 1 merge can happen (?)
+- if after sliding, more than 2 adjacent squares have the same number, only the 2 "furthest away" in the sliding direction will merge
 - after a valid move one new random number spawns in a random empty square
 - throughout the game the chances for a 2 to appear are 90% compared to 10% for 4
 - there are 2 conditions for the game to be over:
