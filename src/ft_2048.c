@@ -12,7 +12,6 @@ int	main(void)
 		game_wait_for_input(&game);
 		game_update(&game);
 	}
-	//endscreen_show(&game);
 	game_destroy(&game);
 	return (SUCCESS);
 }
