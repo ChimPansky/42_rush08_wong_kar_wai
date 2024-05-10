@@ -20,10 +20,12 @@ typedef enum e_game_status
 	OVER
 }		t_game_status;
 
+
 typedef struct s_game
 {
 	t_game_status	status;
-
+	int				grid[5][5];
+	int				size;
 }			t_game;
 
 //game.c
