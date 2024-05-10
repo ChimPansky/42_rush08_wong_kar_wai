@@ -19,7 +19,7 @@ Key features:
 - the grid is represented by a 2-dimensional integer array (int [rows][cols], where rows=cols=4)
 - each square on the grid either contains a single number (power of 2) or nothing
 - the goal of the game is to create a square that contains the number 2048
-- at game start (aka before each player move), 2 numbers (either 2 or 4) spawn in a random (empty) square
+- at game start 2 numbers (either 2 or 4) each spawn in a random (empty) square
 - a player move consists of pressing one of the arrow keys (left, right, up, down) or the ESC key
 - after a direction is read from player input, all the values in the grid "slide" over to the neighboring square in the given direction (if possible).
 	That means:
@@ -32,6 +32,7 @@ Key features:
 - the merging only happens if the neighboring direction matches the sliding direction; for left right its horizontal and for updown its vertical.
 - per move and row/col only 1 merge can happen
 - if after sliding more than 2 adjacent squares have the same number, only the 2 "furthest away" in the sliding direction will merge
+- after a valid move one new random number spawns in a random empty square
 - throughout the game the chances for a 2 to appear are 90% compared to 10% for 4
 - there are 2 conditions for the game to be over:
   - there are no valid moves left (clean_up and quit game)

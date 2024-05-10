@@ -14,7 +14,7 @@ LFLAGS = -lncursesw
 #MAKEFLAGS	= -j$(nproc) --no-print-directory
 
 include libft/colors.mk
-LIBFT = ibft/libft.a
+LIBFT = libft/libft.a
 $(LIBFT):
 	@make -C libft all clean
 IFLAGS += -Ilibft
@@ -26,7 +26,8 @@ lft:
 
 CFILES += \
 	ft_2048.c \
-	game.c
+	game.c \
+	grid.c
 
 SRC = $(addprefix $(SOURCE_DIR)/,$(CFILES))
 OBJ = $(SRC:%.c=$(BUILD_DIR)/%.o)
@@ -38,7 +39,7 @@ $(NAME): $(OBJ) $(LIBFT)
 
 $(BUILD_DIR)/%.o : %.c
 	mkdir -p $(@D)
-	$(CC) $(CFLAGS) $(IFLAGS) -MMD -c $< -o $@
+	$(CC) $(CFLAGS) $(IFLAGS) -c $< -o $@
 
 -include $(DEP)
 
