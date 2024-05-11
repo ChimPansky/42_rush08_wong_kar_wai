@@ -2,11 +2,32 @@
 #include <stdbool.h>
 #include <threads.h>
 
+size_t sigResize = 0;
+
+void  window_size_checker(int size) {
+    int max_x, max_y;
+
+    initscr();
+    curs_set(0);
+    noecho();                 // for ncurses, don't echo any keypresses
+    keypad(stdscr, TRUE);     // for ncurses, enable special keys
+    timeout(0);             // Set timeout for getch to non-blocking mode
+    start_color();
+    init_pair(1, COLOR_RED, COLOR_BLACK);
+    getmaxyx(stdscr, max_y, max_x);
+    if (max_y < (size * 3 + 2) || max_x < (size * 6 + 2)) {
+        endwin();
+        ft_printf("Terminal Window is too small to run the game");
+		exit(1);
+    }
+}
+
 void	game_init(t_game *game)
 {
 	game->status = PLAYING;
 	game->size = 4;
 
+	window_size_checker(game->size);
 	//int max_x, max_y;
 
 	//setlocale(LC_ALL, "");
@@ -24,7 +45,6 @@ void	game_init(t_game *game)
 	// }
 	// this->setStatsWin(subwin(this->getMainWin(), STATS_HEIGHT, SCREEN_WIDTH, 0, 0));
 	// this->setBattleWin(subwin(this->getMainWin(), BATTLE_HEIGHT, SCREEN_WIDTH, STATS_HEIGHT, 0));
-
 }
 
 void	game_destroy(t_game *game)
@@ -84,6 +104,13 @@ bool checks_win_condition(t_game *game)
 	return (false);
 }
 
+void handleResize(t_game *game)
+{
+	clear();
+	game_draw(game);
+	refresh();
+}
+
 void	game_wait_for_input_and_update(t_game *game)
 {
 	static bool win_message_display = false;
@@ -104,6 +131,12 @@ void	game_wait_for_input_and_update(t_game *game)
 			grid_slide_up(game, &game->grid);
 		else if (game->last_key == KEY_DOWN)
 			grid_slide_down(game, &game->grid);
+		
+		if (sigResize == 1)
+		{
+			handleResize(game);
+			sigResize = 0;
+		}
 	}
 
 	if (checks_win_condition(game) == true && !win_message_display)

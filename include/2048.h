@@ -2,7 +2,8 @@
 # define FT_2048
 
 # include <ncurses.h>
-#include <stdbool.h>
+# include <signal.h>
+# include <stdbool.h>
 # include "libft.h"
 # include "time.h"
 
@@ -13,6 +14,7 @@
   define  FAILURE !SUCCESS
 # endif
 
+extern size_t sigResize;
 
 typedef enum e_game_status
 {

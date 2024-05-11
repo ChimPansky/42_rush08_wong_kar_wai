@@ -1,8 +1,16 @@
 #include "2048.h"
 
-int	main(void)
+void resizeHandler(int sig)
 {
-	t_game	game = {};
+	(void)sig;
+	sigResize = 1;
+}
+
+int main(void)
+{
+	t_game game = {};
+
+	signal(SIGWINCH, resizeHandler);
 
 	game_init(&game);
 	grid_spawn_random_nr(&game.grid, game.size);
@@ -14,7 +22,7 @@ int	main(void)
 			int option = 0;
 
 			WINDOW *lose_message = newwin(6, 40, (LINES - 5) / 2, (COLS - 40) / 2);
-			box(lose_message, 0,0);
+			box(lose_message, 0, 0);
 			mvwprintw(game.win_main, 2, 1, "NO MOVES POSSIBLE!");
 			mvwprintw(game.win_main, 3, 1, "Do you Wish to Restart? Press R");
 			mvwprintw(game.win_main, 4, 1, "To quit, Press Q");
