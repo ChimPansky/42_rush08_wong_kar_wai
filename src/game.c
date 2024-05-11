@@ -53,8 +53,8 @@ void game_draw(t_game *game)
             mvwprintw(game->win_main, cell_y + 1, cell_x, "|     |");
             mvwprintw(game->win_main, cell_y + 2, cell_x, "+-----+");
 
-            if (game->grid[row][col] != 0)
-                mvwprintw(game->win_main, cell_y + 1, cell_x + 2, "%2d", game->grid[row][col]);
+            if (game->grid.values[row][col] != 0)
+                mvwprintw(game->win_main, cell_y + 1, cell_x + 2, "%2d", game->grid.values[row][col]);
 			col++;
         }
 		row++;
@@ -75,7 +75,7 @@ bool checks_win_condition(t_game *game)
 		col = 0;
 		while (col < game->size)
 		{
-			if (game->grid[row][col] == WIN_VALUE)
+			if (game->grid.values[row][col] == WIN_VALUE)
 				return true;
 			col++;
 		}
@@ -131,7 +131,7 @@ bool checks_win_condition(t_game *game)
 		return ;
 	}
 	grid_check_for_collisions_and_merge(game);
-}
+}*/
 
 void	game_wait_for_input(t_game *game)
 {
