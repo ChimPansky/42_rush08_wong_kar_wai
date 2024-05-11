@@ -86,6 +86,8 @@ bool checks_win_condition(t_game *game)
 
 void	game_wait_for_input_and_update(t_game *game)
 {
+	static bool win_message_display = false;
+
 	if (game->last_key == 27)
 	{
 		game->status = ABORTED;
@@ -103,35 +105,32 @@ void	game_wait_for_input_and_update(t_game *game)
 		else if (game->last_key == KEY_DOWN)
 			grid_slide_down(game, &game->grid);
 	}
+
+	if (checks_win_condition(game) == true && !win_message_display)
+	{
+		int option = 0;
+
+		WINDOW *win_message = newwin(6, 40, (LINES - 5) / 2, (COLS - 40) / 2);
+		box(win_message, 0,0);
+		mvwprintw(win_message, 2, 2, "Congrats You Achieved 2048!!");
+		mvwprintw(win_message, 3, 2, "Press Q to quit or C to continue");
+		wrefresh(win_message);
+
+		while (option != 'q' && option != 'Q' && option != 'c' && option != 'C')
+			option = getch();
+		
+		if (option == 'q' || option == 'Q')
+			game->status = ABORTED;
+		else if (option == 'c' || option == 'C')
+			game->status = PLAYING;
+		
+		delwin(win_message);
+		win_message_display = true;
+	}
+
 	game->grid.grid_changed_after_move = false;
 
 }
-/*
-bool checks_win_condition(t_game *game)
-{
-	int row;
-	int col;
-
-	row = 0;
-	col = 0;
-	while (row < game->size)
-
-	if (game->last_key == KEY_LEFT)
-		grid_slide_left(game);
-	else if (game->last_key == KEY_RIGHT)
-		grid_slide_right(game);
-	else if (game->last_key == KEY_UP)
-		grid_slide_up(game);
-	else if (game->last_key == KEY_DOWN)
-		grid_slide_down(game);
-	
-	if (checks_win_condition(game) == true)
-	{
-		game->status = ABORTED;
-		return ;
-	}
-	grid_check_for_collisions_and_merge(game);
-}*/
 
 void	game_wait_for_input(t_game *game)
 {
