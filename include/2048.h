@@ -21,6 +21,11 @@ typedef enum e_game_status
 	OVER
 }		t_game_status;
 
+enum e_const
+{
+	WIN_VALUE = 2048
+};
+
 typedef struct s_position
 {
 	int	row;

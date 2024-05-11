@@ -33,24 +33,55 @@ void	game_destroy(t_game *game)
 	endwin();
 }
 
-void	game_draw(t_game *game)
+void game_draw(t_game *game)
 {
-	int	row, col;
+    int row, col;
+    clear();
+
+    box(game->win_main, 0, 0);
 
 	row = col = 0;
+    while (row < game->size)
+    {
+		col = 0;
+        while (col < game->size)
+        {
+            int cell_x = 2 + col * 6;
+            int cell_y = 2 + row * 3;
+
+            mvwprintw(game->win_main, cell_y, cell_x, "+-----+");
+            mvwprintw(game->win_main, cell_y + 1, cell_x, "|     |");
+            mvwprintw(game->win_main, cell_y + 2, cell_x, "+-----+");
+
+            if (game->grid[row][col] != 0)
+                mvwprintw(game->win_main, cell_y + 1, cell_x + 2, "%2d", game->grid[row][col]);
+			col++;
+        }
+		row++;
+    }
+    wrefresh(game->win_main);
+}
+
+
+bool checks_win_condition(t_game *game)
+{
+	int row;
+	int col;
+
+	row = 0;
+	col = 0;
 	while (row < game->size)
 	{
 		col = 0;
 		while (col < game->size)
 		{
-			mvwprintw(game->win_main, row, col * 5, "%5d", game->grid[row][col]);
+			if (game->grid[row][col] == WIN_VALUE)
+				return true;
 			col++;
 		}
 		row++;
 	}
-	time_t	cur_time = time(NULL);
-	mvwprintw(game->win_main, 10, 0, "%lu", cur_time);
-	mvwprintw(game->win_main, 11, 0, "%d", rand());
+	return (false);
 }
 
 void	game_update(t_game *game)
@@ -70,33 +101,13 @@ void	game_update(t_game *game)
 	else if (game->last_key == KEY_DOWN)
 		grid_slide_down(game);
 	
-
-
-	grid_check_for_collisions_and_merge(game);
-
-}
-
-/*
-bool checks_win_condition(t_game *game)
-{
-	int row;
-	int col;
-
-	row = 0;
-	col = 0;
-	while (row < game->size)
+	if (checks_win_condition(game) == true)
 	{
-		while (col < game->size)
-		{
-			if (game ->grid[row][col] == 2048)
-				return true;
-			col++;
-		}
-		row++;
+		game->status = ABORTED;
+		return ;
 	}
-	return false;
-}*/
-
+	grid_check_for_collisions_and_merge(game);
+}
 
 void	game_wait_for_input(t_game *game)
 {
