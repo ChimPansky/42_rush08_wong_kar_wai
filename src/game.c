@@ -53,8 +53,8 @@ void game_draw(t_game *game)
             mvwprintw(game->win_main, cell_y + 1, cell_x, "|     |");
             mvwprintw(game->win_main, cell_y + 2, cell_x, "+-----+");
 
-            if (game->grid.values[row][col] != 0)
-                mvwprintw(game->win_main, cell_y + 1, cell_x + 2, "%2d", game->grid.values[row][col]);
+            if (game->grid.squares[row][col].value != 0)
+                mvwprintw(game->win_main, cell_y + 1, cell_x + 2, "%2d", game->grid.squares[row][col].value);
 			col++;
         }
 		row++;
@@ -75,7 +75,7 @@ bool checks_win_condition(t_game *game)
 		col = 0;
 		while (col < game->size)
 		{
-			if (game->grid.values[row][col] == WIN_VALUE)
+			if (game->grid.squares[row][col].value  == WIN_VALUE)
 				return true;
 			col++;
 		}
@@ -104,8 +104,41 @@ void	game_wait_for_input_and_update(t_game *game)
 			grid_slide_down(game, &game->grid);
 	}
 	game->grid.grid_changed_after_move = false;
+	grid_reset_merged(game, &game->grid);
 
 }
+
+void	game_wait_for_input(t_game *game)
+{
+	bool	valid_input = false;
+
+	while (!valid_input)
+	{
+		game->last_key = getch();
+		if (game->last_key == KEY_LEFT || game->last_key == KEY_RIGHT
+				|| game->last_key == KEY_UP || game->last_key == KEY_DOWN
+				|| game->last_key == 27)
+		valid_input = true;
+	}
+}
+
+bool	moves_are_possible(t_game *game)
+{
+	grid_copy(game, game->grid.squares, game->check_grid.squares);
+	game->check_grid.grid_changed_after_move = false;
+	game->last_key = KEY_LEFT;
+	grid_slide_left(game, &game->check_grid);
+	game->last_key = KEY_RIGHT;
+	grid_slide_right(game, &game->check_grid);
+	game->last_key = KEY_UP;
+	grid_slide_up(game, &game->check_grid);
+	game->last_key = KEY_DOWN;
+	grid_slide_down(game, &game->check_grid);
+	if (game->check_grid.grid_changed_after_move)
+		return (true);
+	return (false);
+}
+
 /*
 bool checks_win_condition(t_game *game)
 {
@@ -132,34 +165,3 @@ bool checks_win_condition(t_game *game)
 	}
 	grid_check_for_collisions_and_merge(game);
 }*/
-
-void	game_wait_for_input(t_game *game)
-{
-	bool	valid_input = false;
-
-	while (!valid_input)
-	{
-		game->last_key = getch();
-		if (game->last_key == KEY_LEFT || game->last_key == KEY_RIGHT
-				|| game->last_key == KEY_UP || game->last_key == KEY_DOWN
-				|| game->last_key == 27)
-		valid_input = true;
-	}
-}
-
-bool	moves_are_possible(t_game *game)
-{
-	grid_copy(game, game->grid.values, game->check_grid.values);
-	game->check_grid.grid_changed_after_move = false;
-	game->last_key = KEY_LEFT;
-	grid_slide_left(game, &game->check_grid);
-	game->last_key = KEY_RIGHT;
-	grid_slide_right(game, &game->check_grid);
-	game->last_key = KEY_UP;
-	grid_slide_up(game, &game->check_grid);
-	game->last_key = KEY_DOWN;
-	grid_slide_down(game, &game->check_grid);
-	if (game->check_grid.grid_changed_after_move)
-		return (true);
-	return (false);
-}

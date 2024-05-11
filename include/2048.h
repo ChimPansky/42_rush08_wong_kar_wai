@@ -33,7 +33,6 @@ enum e_direction
 enum e_const
 {
 	WIN_VALUE = 2048
-
 };
 
 typedef struct s_position
@@ -42,10 +41,16 @@ typedef struct s_position
 	int	col;
 }				t_position;
 
+typedef struct s_square
+{
+	int		value;
+	bool	merged;
+}			t_square;
+
 typedef struct s_grid
 {
-	int		values[5][5];
-	bool	grid_changed_after_move;
+	t_square	squares[5][5];
+	bool		grid_changed_after_move;
 }			t_grid;
 
 typedef struct s_game
@@ -72,7 +77,8 @@ void	grid_slide_right(t_game *game, t_grid *grid);
 void	grid_slide_up(t_game *game, t_grid *grid);
 void	grid_slide_down(t_game *game, t_grid *grid);
 void 	check_neighbor_and_merge(t_game *game, t_grid *grid, t_position src, t_position dst);
-void	grid_copy(t_game *game, int src[5][5], int dst[5][5]);
+void	grid_copy(t_game *game, t_square src[5][5], t_square dst[5][5]);
+void	grid_reset_merged(t_game *game, t_grid *grid);
 bool	moves_are_possible(t_game *game);
 
 // position.c
