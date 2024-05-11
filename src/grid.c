@@ -26,8 +26,18 @@ static void	try_slide(t_game *game, t_position src, t_position dst)
 {
 	if (dst.row < 0 || dst.row > game->size || dst.col < 0 || dst.col > game->size)
 		return ;
+	
+	//Merge function (Its not perfect but it works)
+	if (game->grid[dst.row][dst.col] == game->grid[src.row][src.col])
+	{
+		game->grid[dst.row][dst.col] *= 2;
+		game->grid[src.row][src.col] = 0; 
+		return ;
+	}
+
 	if (game->grid[dst.row][dst.col] != 0)
 		return ;
+
 	game->grid[dst.row][dst.col] = game->grid[src.row][src.col];
 	game->grid[src.row][src.col] = 0;
 }
@@ -62,7 +72,7 @@ void	grid_slide_right(t_game *game)
 	while (src.row < game->size)
 	{
 		dst.row = src.row;
-		src.col = game->size;
+		src.col = game->size - 2;
 		while (src.col >= 0)
 		{
 			dst.col = src.col + 1;
@@ -100,7 +110,7 @@ void	grid_slide_down(t_game *game)
 	t_position	src;
 	t_position	dst;
 
-	src.row = game->size;
+	src.row = game->size - 2;
 	while (src.row >= 0)
 	{
 		dst.row = src.row + 1;

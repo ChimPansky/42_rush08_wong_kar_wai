@@ -60,6 +60,7 @@ void	game_update(t_game *game)
 		game->status = ABORTED;
 		return ;
 	}
+
 	if (game->last_key == KEY_LEFT)
 		grid_slide_left(game);
 	else if (game->last_key == KEY_RIGHT)
@@ -68,9 +69,35 @@ void	game_update(t_game *game)
 		grid_slide_up(game);
 	else if (game->last_key == KEY_DOWN)
 		grid_slide_down(game);
+	
+
+
 	grid_check_for_collisions_and_merge(game);
 
 }
+
+/*
+bool checks_win_condition(t_game *game)
+{
+	int row;
+	int col;
+
+	row = 0;
+	col = 0;
+	while (row < game->size)
+	{
+		while (col < game->size)
+		{
+			if (game ->grid[row][col] == 2048)
+				return true;
+			col++;
+		}
+		row++;
+	}
+	return false;
+}*/
+
+
 void	game_wait_for_input(t_game *game)
 {
 	bool	valid_input = false;
