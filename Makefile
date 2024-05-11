@@ -27,7 +27,8 @@ lft:
 CFILES += \
 	ft_2048.c \
 	game.c \
-	grid.c
+	grid.c \
+	position.c
 
 SRC = $(addprefix $(SOURCE_DIR)/,$(CFILES))
 OBJ = $(SRC:%.c=$(BUILD_DIR)/%.o)

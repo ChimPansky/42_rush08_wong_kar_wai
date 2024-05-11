@@ -43,7 +43,7 @@ void	game_draw(t_game *game)
 		col = 0;
 		while (col < game->size)
 		{
-			mvwprintw(game->win_main, row, col * 5, "%5d", game->grid[row][col]);
+			mvwprintw(game->win_main, row, col * 5, "%5d", game->grid.values[row][col]);
 			col++;
 		}
 		row++;
@@ -53,23 +53,27 @@ void	game_draw(t_game *game)
 	mvwprintw(game->win_main, 11, 0, "%d", rand());
 }
 
-void	game_update(t_game *game)
+void	game_wait_for_input_and_update(t_game *game)
 {
 	if (game->last_key == 27)
 	{
 		game->status = ABORTED;
 		return ;
 	}
+	while (!game->grid.grid_changed_after_move)
+	{
+		game_wait_for_input(game);
+		if (game->last_key == KEY_LEFT)
+			grid_slide_left(game, &game->grid);
+		else if (game->last_key == KEY_RIGHT)
+			grid_slide_right(game, &game->grid);
+		else if (game->last_key == KEY_UP)
+			grid_slide_up(game, &game->grid);
+		else if (game->last_key == KEY_DOWN)
+			grid_slide_down(game, &game->grid);
+	}
+	game->grid.grid_changed_after_move = false;
 
-	if (game->last_key == KEY_LEFT)
-		grid_slide_left(game);
-	else if (game->last_key == KEY_RIGHT)
-		grid_slide_right(game);
-	else if (game->last_key == KEY_UP)
-		grid_slide_up(game);
-	else if (game->last_key == KEY_DOWN)
-		grid_slide_down(game);
-	
 
 
 	grid_check_for_collisions_and_merge(game);
@@ -110,4 +114,17 @@ void	game_wait_for_input(t_game *game)
 				|| game->last_key == 27)
 		valid_input = true;
 	}
+}
+
+bool	moves_are_possible(t_game *game)
+{
+	grid_copy(game, game->grid.values, game->check_grid.values);
+	game->check_grid.grid_changed_after_move = false;
+	grid_slide_left(game, &game->check_grid);
+	grid_slide_right(game, &game->check_grid);
+	grid_slide_up(game, &game->check_grid);
+	grid_slide_down(game, &game->check_grid);
+	if (game->check_grid.grid_changed_after_move)
+		return (true);
+	return (false);
 }
