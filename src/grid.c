@@ -16,40 +16,47 @@ void	grid_spawn_random_nr(t_grid *grid, int size)
 	{
 		row = rand() % size;
 		col = rand() % size;
-		if (grid->values[row][col] == 0)
+		if (grid->squares[row][col].value == 0)
 			break;
 	}
-	grid->values[row][col] = get_two_or_four();
+	grid->squares[row][col].value = get_two_or_four();
 }
 
-static void	try_slide(t_game *game, t_grid *grid, t_position src, t_position dst)
+static void	merge_squares(t_grid *grid, t_position src, t_position dst)
 {
-	if (dst.row < 0 || dst.row > game->size || dst.col < 0 || dst.col > game->size)
+	if (grid->squares[dst.row][dst.col].value == 0)
+		grid->squares[dst.row][dst.col].value = grid->squares[src.row][src.col].value;
+	else
+		grid->squares[dst.row][dst.col].value *= 2;
+	grid->grid_changed_after_move = true;
+	grid->squares[src.row][src.col].value = 0;
+}
+
+static void	try_slide(t_game *game, t_grid *grid, t_position src)
+{
+	t_position	dst;
+
+	dst.col = src.col;
+	dst.row = src.row;
+	position_shift_by_one(&dst, game->last_key);
+	if (dst.row < 0 || dst.row >= game->size || dst.col < 0 || dst.col >= game->size)
 		return ;
-	if (position_is_equal(src, dst))
-		return ;
-	//Merge function (Its not perfect but it works)
-	if (grid->values[dst.row][dst.col] == grid->values[src.row][src.col])
+	if (grid->squares[dst.row][dst.col].value == 0)
 	{
-		grid->values[dst.row][dst.col] *= 2;
-		grid->values[src.row][src.col] = 0;
-		grid->grid_changed_after_move = true;
+		merge_squares(grid, src, dst);
+		try_slide(game, grid, dst);
 		return ;
 	}
-	if (grid->values[dst.row][dst.col] == 0)
+	if (grid->squares[dst.row][dst.col].value != 0
+		&& grid->squares[dst.row][dst.col].value == grid->squares[src.row][src.col].value
+		&& grid->squares[dst.row][dst.col].merged == false)
 	{
-		grid->values[dst.row][dst.col] = grid->values[src.row][src.col];
-		grid->values[src.row][src.col] = 0;
-		grid->grid_changed_after_move = true;
-		return ;
-	}
-	if (grid->values[dst.row][dst.col] != 0)
-	{
-		position_shift_by_one(&dst, game->last_key);
-		try_slide(game, grid, src, dst);
+		merge_squares(grid, src, dst);
+		grid->squares[dst.row][dst.col].merged = true;
 		return ;
 	}
 }
+
 
 void	grid_slide_left(t_game *game, t_grid *grid)
 {
@@ -64,8 +71,8 @@ void	grid_slide_left(t_game *game, t_grid *grid)
 		src.col = 1;
 		while (src.col < game->size)
 		{
-			if (grid->values[src.row][src.col] != 0)
-				try_slide(game, grid, src, dst);
+			if (grid->squares[src.row][src.col].value != 0)
+				try_slide(game, grid, src);
 			src.col++;
 		}
 		src.row++;
@@ -85,8 +92,8 @@ void	grid_slide_right(t_game *game, t_grid *grid)
 		src.col = game->size - 2;
 		while (src.col >= 0)
 		{
-			if (grid->values[src.row][src.col] != 0)
-				try_slide(game, grid, src, dst);
+			if (grid->squares[src.row][src.col].value != 0)
+				try_slide(game, grid, src);
 			src.col--;
 		}
 		src.row++;
@@ -106,8 +113,8 @@ void	grid_slide_up(t_game *game, t_grid *grid)
 		while (src.col < game->size)
 		{
 			dst.col = src.col;
-			if (grid->values[src.row][src.col] != 0)
-				try_slide(game, grid, src, dst);
+			if (grid->squares[src.row][src.col].value != 0)
+				try_slide(game, grid, src);
 			src.col++;
 		}
 		src.row++;
@@ -127,20 +134,26 @@ void	grid_slide_down(t_game *game, t_grid *grid)
 		while (src.col < game->size)
 		{
 			dst.col = src.col;
-			if (grid->values[src.row][src.col] != 0)
-				try_slide(game, grid, src, dst);
+			if (grid->squares[src.row][src.col].value != 0)
+				try_slide(game, grid, src);
 			src.col++;
 		}
 		src.row--;
 	}
 }
 
-void grid_check_for_collisions_and_merge(t_game *game)
-{
-	(void)game;
-}
+// void 	check_neighbor_and_merge(t_game *game, t_grid *grid, t_position src, t_position dst)
+// {
+// 	position_shift_by_one(&dst, game->last_key);
+// 	if (grid->squares[dst.row][dst.col].value == grid->squares[src.row][src.col].value)
+// 	{
+// 		grid->squares[dst.row][dst.col].value *= 2;
+// 		grid->squares[src.row][src.col].value = 0;
+// 		grid->grid_changed_after_move = true;
+// 	}
+// }
 
-void	grid_copy(t_game *game, int src[5][5], int dst[5][5])
+void	grid_copy(t_game *game, t_square src[5][5], t_square dst[5][5])
 {
 	t_position	cur;
 
@@ -152,7 +165,26 @@ void	grid_copy(t_game *game, int src[5][5], int dst[5][5])
 		cur.col = 0;
 		while (cur.col < game->size)
 		{
-			dst[cur.row][cur.col] = src[cur.row][cur.col];
+			dst[cur.row][cur.col].value = src[cur.row][cur.col].value;
+			dst[cur.row][cur.col].merged = false;
+			cur.col++;
+		}
+		cur.row++;
+	}
+}
+
+void	grid_reset_merged(t_game *game, t_grid *grid)
+{
+	t_position	cur;
+
+	cur.row = 0;
+	cur.col = 0;
+	while (cur.row < game->size)
+	{
+		cur.col = 0;
+		while (cur.col < game->size)
+		{
+			grid->squares[cur.row][cur.col].merged = false;
 			cur.col++;
 		}
 		cur.row++;
