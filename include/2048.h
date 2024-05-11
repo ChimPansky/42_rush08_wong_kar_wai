@@ -28,6 +28,12 @@ enum e_direction
 	RIGHT,
 	UP,
 	DOWN
+  }
+
+enum e_const
+{
+	WIN_VALUE = 2048
+
 };
 
 typedef struct s_position
