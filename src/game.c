@@ -84,13 +84,37 @@ bool checks_win_condition(t_game *game)
 	return (false);
 }
 
-void	game_update(t_game *game)
+void	game_wait_for_input_and_update(t_game *game)
 {
 	if (game->last_key == 27)
 	{
 		game->status = ABORTED;
 		return ;
 	}
+	while (!game->grid.grid_changed_after_move)
+	{
+		game_wait_for_input(game);
+		if (game->last_key == KEY_LEFT)
+			grid_slide_left(game, &game->grid);
+		else if (game->last_key == KEY_RIGHT)
+			grid_slide_right(game, &game->grid);
+		else if (game->last_key == KEY_UP)
+			grid_slide_up(game, &game->grid);
+		else if (game->last_key == KEY_DOWN)
+			grid_slide_down(game, &game->grid);
+	}
+	game->grid.grid_changed_after_move = false;
+
+}
+/*
+bool checks_win_condition(t_game *game)
+{
+	int row;
+	int col;
+
+	row = 0;
+	col = 0;
+	while (row < game->size)
 
 	if (game->last_key == KEY_LEFT)
 		grid_slide_left(game);
@@ -121,4 +145,17 @@ void	game_wait_for_input(t_game *game)
 				|| game->last_key == 27)
 		valid_input = true;
 	}
+}
+
+bool	moves_are_possible(t_game *game)
+{
+	grid_copy(game, game->grid.values, game->check_grid.values);
+	game->check_grid.grid_changed_after_move = false;
+	grid_slide_left(game, &game->check_grid);
+	grid_slide_right(game, &game->check_grid);
+	grid_slide_up(game, &game->check_grid);
+	grid_slide_down(game, &game->check_grid);
+	if (game->check_grid.grid_changed_after_move)
+		return (true);
+	return (false);
 }
