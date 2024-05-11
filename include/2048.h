@@ -71,12 +71,13 @@ void	grid_slide_left(t_game *game, t_grid *grid);
 void	grid_slide_right(t_game *game, t_grid *grid);
 void	grid_slide_up(t_game *game, t_grid *grid);
 void	grid_slide_down(t_game *game, t_grid *grid);
-void 	grid_check_for_collisions_and_merge(t_game *game);
+void 	check_neighbor_and_merge(t_game *game, t_grid *grid, t_position src, t_position dst);
 void	grid_copy(t_game *game, int src[5][5], int dst[5][5]);
 bool	moves_are_possible(t_game *game);
 
 // position.c
 bool	position_is_equal(t_position pos1, t_position pos2);
+void	position_shift_by_one_reverse(t_position *pos, int direction);
 void	position_shift_by_one(t_position *pos, int direction);
 
 #endif

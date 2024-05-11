@@ -29,23 +29,17 @@ static void	try_slide(t_game *game, t_grid *grid, t_position src, t_position dst
 	if (position_is_equal(src, dst))
 		return ;
 	//Merge function (Its not perfect but it works)
-	if (grid->values[dst.row][dst.col] == grid->values[src.row][src.col])
-	{
-		grid->values[dst.row][dst.col] *= 2;
-		grid->values[src.row][src.col] = 0;
-		grid->grid_changed_after_move = true;
-		return ;
-	}
 	if (grid->values[dst.row][dst.col] == 0)
 	{
 		grid->values[dst.row][dst.col] = grid->values[src.row][src.col];
 		grid->values[src.row][src.col] = 0;
 		grid->grid_changed_after_move = true;
+		check_neighbor_and_merge(game, grid, src, dst);
 		return ;
 	}
 	if (grid->values[dst.row][dst.col] != 0)
 	{
-		position_shift_by_one(&dst, game->last_key);
+		position_shift_by_one_reverse(&dst, game->last_key);
 		try_slide(game, grid, src, dst);
 		return ;
 	}
@@ -135,9 +129,15 @@ void	grid_slide_down(t_game *game, t_grid *grid)
 	}
 }
 
-void grid_check_for_collisions_and_merge(t_game *game)
+void 	check_neighbor_and_merge(t_game *game, t_grid *grid, t_position src, t_position dst)
 {
-	(void)game;
+	position_shift_by_one(&dst, game->last_key);
+	if (grid->values[dst.row][dst.col] == grid->values[src.row][src.col])
+	{
+		grid->values[dst.row][dst.col] *= 2;
+		grid->values[src.row][src.col] = 0;
+		grid->grid_changed_after_move = true;
+	}
 }
 
 void	grid_copy(t_game *game, int src[5][5], int dst[5][5])

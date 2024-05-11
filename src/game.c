@@ -124,7 +124,7 @@ bool checks_win_condition(t_game *game)
 		grid_slide_up(game);
 	else if (game->last_key == KEY_DOWN)
 		grid_slide_down(game);
-	
+
 	if (checks_win_condition(game) == true)
 	{
 		game->status = ABORTED;
@@ -151,9 +151,13 @@ bool	moves_are_possible(t_game *game)
 {
 	grid_copy(game, game->grid.values, game->check_grid.values);
 	game->check_grid.grid_changed_after_move = false;
+	game->last_key = KEY_LEFT;
 	grid_slide_left(game, &game->check_grid);
+	game->last_key = KEY_RIGHT;
 	grid_slide_right(game, &game->check_grid);
+	game->last_key = KEY_UP;
 	grid_slide_up(game, &game->check_grid);
+	game->last_key = KEY_DOWN;
 	grid_slide_down(game, &game->check_grid);
 	if (game->check_grid.grid_changed_after_move)
 		return (true);
