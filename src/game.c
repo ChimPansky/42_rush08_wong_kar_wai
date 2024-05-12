@@ -1,4 +1,5 @@
 #include "2048.h"
+#include <ncurses.h>
 #include <stdbool.h>
 #include <threads.h>
 
@@ -13,7 +14,7 @@ void  window_size_checker(int size) {
     keypad(stdscr, TRUE);     // for ncurses, enable special keys
     timeout(0);             // Set timeout for getch to non-blocking mode
     start_color();
-    init_pair(1, COLOR_RED, COLOR_BLACK);
+    init_pair(1, COLOR_WHITE, COLOR_RED);
     getmaxyx(stdscr, max_y, max_x);
     if (max_y < (size * 3 + 2) || max_x < (size * 6 + 2)) {
         endwin();
@@ -26,25 +27,46 @@ void	game_init(t_game *game)
 {
 	game->status = PLAYING;
 	game->size = 4;
-
 	window_size_checker(game->size);
-
-	game->win_main = initscr();
+	initscr();
 	cbreak();	// disables line buffering, making input characters available immediately
 	noecho(); 	// don't echo any keypresses
 	keypad(stdscr, TRUE); 	// enable special keys
-	//setlocale(LC_ALL, "");
-	//curs_set(0);
-	//timeout(0); 			// Set timeout for getch to non-blocking mode
-	//start_color();
-	//init_pair(1, COLOR_RED, COLOR_BLACK);
+	grid_create_windows(game, &game->grid);
+}
+void	grid_destroy_windows(t_game *game, t_grid *grid)
+{
+	int	row = 0;
+	int	col = 0;
 
+	while (row < game->size)
+	{
+		col = 0;
+		while (col < game->size)
+		{
+			delwin(grid->squares[row][col].win);
+			col++;
+		}
+		row++;
+	}
 }
 
 void	game_destroy(t_game *game)
 {
-	delwin(game->win_main);
+	grid_destroy_windows(game, &game->grid);
 	endwin();
+}
+
+void	draw_square(t_square *square, int color_pair)
+{
+    werase(square->win);
+	wattron(square->win, COLOR_PAIR(color_pair));
+	wbkgd(square->win, COLOR_PAIR(color_pair));
+    //box(square->win, 0, 0);
+	mvwprintw(square->win, SQUARE_HEIGHT / 2, SQUARE_WIDTH / 2 - 1, "%d", square->value);
+	wattroff(square->win, COLOR_PAIR(color_pair));
+	refresh();
+    wrefresh(square->win);
 }
 
 void game_draw(t_game *game)
@@ -52,7 +74,7 @@ void game_draw(t_game *game)
     int row, col;
     clear();
 
-    box(game->win_main, 0, 0);
+    //box(stdscr, 0, 0);
 
 	row = col = 0;
     while (row < game->size)
@@ -60,20 +82,12 @@ void game_draw(t_game *game)
 		col = 0;
         while (col < game->size)
         {
-            int cell_x = 2 + col * 6;
-            int cell_y = 2 + row * 3;
-
-            mvwprintw(game->win_main, cell_y, cell_x, "+-----+");
-            mvwprintw(game->win_main, cell_y + 1, cell_x, "|     |");
-            mvwprintw(game->win_main, cell_y + 2, cell_x, "+-----+");
-
-            if (game->grid.squares[row][col].value != 0)
-                mvwprintw(game->win_main, cell_y + 1, cell_x + 2, "%2d", game->grid.squares[row][col].value);
+			draw_square(&game->grid.squares[row][col], 1);
 			col++;
         }
 		row++;
     }
-    wrefresh(game->win_main);
+	row = col = 0;
 }
 
 
