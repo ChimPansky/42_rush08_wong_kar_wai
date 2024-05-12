@@ -18,6 +18,28 @@
 
 extern size_t sigResize;
 
+typedef enum e_custom_colors
+{
+	WHITE,
+	BLACK,
+	GREY,
+	LIGHT_GREY,
+	DARK_GREY,
+	CUSTOM_1,
+	CUSTOM_2,
+	CUSTOM_3,
+	CUSTOM_4,
+	CUSTOM_5,
+	CUSTOM_6,
+	CUSTOM_7,
+	CUSTOM_8,
+	CUSTOM_9,
+	CUSTOM_10,
+	CUSTOM_11,
+	CUSTOM_12,
+	CUSTOM_13
+}		t_custom_colors;
+
 typedef enum e_game_status
 {
 	PLAYING,

@@ -7,14 +7,27 @@ size_t sigResize = 0;
 
 void custom_colors()
 {
-	init_pair(2, 1, COLOR_BLACK);
-	init_pair(4, 2, COLOR_BLACK);
-	init_pair(8, 3, COLOR_BLACK);
-	init_pair(16, 4, COLOR_BLACK);
-	init_pair(32, 5, COLOR_BLACK);
-	init_pair(64, 6, COLOR_BLACK);
-	init_pair(128, 7, COLOR_BLACK);
-	init_pair(256, 1, COLOR_BLACK);
+	init_color(GREY, 128, 128, 128);
+	init_color(WHITE, 255, 255, 255);
+	init_color(BLACK, 0, 0, 0);
+	init_color(CUSTOM_1, 242, 177, 121);
+	init_color(CUSTOM_2, 245, 149, 99);
+	init_color(CUSTOM_3, 246, 124, 95);
+	init_color(CUSTOM_4, 246, 94, 59);
+	init_color(CUSTOM_5, 237, 207, 114);
+	init_color(CUSTOM_6, 237, 204, 97);
+	init_color(CUSTOM_7, 237, 200, 80);
+	init_color(LIGHT_GREY, 238, 228, 218);
+	init_color(DARK_GREY, 237, 224, 200);
+	init_pair(99, GREY, GREY);
+	init_pair(2, BLACK, LIGHT_GREY);
+	init_pair(4, BLACK, DARK_GREY);
+	init_pair(8, WHITE, CUSTOM_1);
+	init_pair(16, WHITE, CUSTOM_2);
+	init_pair(32, WHITE, CUSTOM_3);
+	init_pair(64, WHITE, CUSTOM_4);
+	init_pair(128, WHITE, CUSTOM_5);
+	init_pair(256, WHITE, CUSTOM_6);
 	init_pair(512, 2, COLOR_BLACK);
 	init_pair(1024, 3, COLOR_BLACK);
 	init_pair(2048, 4, COLOR_BLACK);
@@ -28,10 +41,13 @@ void	game_init(t_game *game, int size)
 	game->size = size;
 	start_color();
 	custom_colors();
-	game->win_main = initscr();
+	initscr();
+	init_pair(1, COLOR_BLACK, WHITE);
+	wattron(stdscr, COLOR_PAIR(1));
+	wbkgd(stdscr, COLOR_PAIR(1));
+    //box(square->win, 0, 0);
 	noecho(); 				// for ncurses, don't echo any keypresses
 	keypad(stdscr, TRUE); 	// for ncurses, enable special keys
-	initscr();
 	grid_create_windows(game, &game->grid);
 }
 void	grid_destroy_windows(t_game *game, t_grid *grid)
@@ -57,14 +73,20 @@ void	game_destroy(t_game *game)
 	endwin();
 }
 
-void	draw_square(t_square *square, int color_pair)
+void	draw_square(t_square *square)
 {
+	int color;
+
+	color = square->value;
     werase(square->win);
-	wattron(square->win, COLOR_PAIR(color_pair));
-	wbkgd(square->win, COLOR_PAIR(color_pair));
-    //box(square->win, 0, 0);
-	mvwprintw(square->win, SQUARE_HEIGHT / 2, SQUARE_WIDTH / 2 - 1, "%d", square->value);
-	wattroff(square->win, COLOR_PAIR(color_pair));
+	if (color == 0)
+		color = 99;
+	wattron(square->win, COLOR_PAIR(color));
+	wbkgd(square->win, COLOR_PAIR(color));
+    box(square->win, 0, 0);
+	if (square->value != 0)
+		mvwprintw(square->win, SQUARE_HEIGHT / 2, SQUARE_WIDTH / 2 - 1, "%d", square->value);
+	wattroff(square->win, COLOR_PAIR(color));
 	refresh();
     wrefresh(square->win);
 }
@@ -99,7 +121,7 @@ void game_draw(t_game *game)
 				mvwprintw(game->win_main, cell_y + 1, cell_x + 2, "%2d", value);
 				wattroff(game->win_main, COLOR_PAIR(value));
 			}
-      */			
+      */
 			col++;
         }
 		row++;
