@@ -5,33 +5,33 @@
 
 size_t sigResize = 0;
 
-void  window_size_checker(int size) {
-    int max_x, max_y;
-
-    initscr();
-    curs_set(0);
-    noecho();                 // for ncurses, don't echo any keypresses
-    keypad(stdscr, TRUE);     // for ncurses, enable special keys
-    timeout(0);             // Set timeout for getch to non-blocking mode
-    start_color();
-    init_pair(1, COLOR_WHITE, COLOR_RED);
-    getmaxyx(stdscr, max_y, max_x);
-    if (max_y < (size * 3 + 2) || max_x < (size * 6 + 2)) {
-        endwin();
-        ft_printf("Terminal Window is too small to run the game");
-		exit(1);
-    }
+void custom_colors()
+{
+	init_pair(2, 1, COLOR_BLACK);
+	init_pair(4, 2, COLOR_BLACK);
+	init_pair(8, 3, COLOR_BLACK);
+	init_pair(16, 4, COLOR_BLACK);
+	init_pair(32, 5, COLOR_BLACK);
+	init_pair(64, 6, COLOR_BLACK);
+	init_pair(128, 7, COLOR_BLACK);
+	init_pair(256, 1, COLOR_BLACK);
+	init_pair(512, 2, COLOR_BLACK);
+	init_pair(1024, 3, COLOR_BLACK);
+	init_pair(2048, 4, COLOR_BLACK);
+	init_pair(4096, 5, COLOR_BLACK);
+	init_pair(8192, 6, COLOR_BLACK);
 }
 
-void	game_init(t_game *game)
+void	game_init(t_game *game, int size)
 {
 	game->status = PLAYING;
-	game->size = 4;
-	window_size_checker(game->size);
+	game->size = size;
+	start_color();
+	custom_colors();
+	game->win_main = initscr();
+	noecho(); 				// for ncurses, don't echo any keypresses
+	keypad(stdscr, TRUE); 	// for ncurses, enable special keys
 	initscr();
-	cbreak();	// disables line buffering, making input characters available immediately
-	noecho(); 	// don't echo any keypresses
-	keypad(stdscr, TRUE); 	// enable special keys
 	grid_create_windows(game, &game->grid);
 }
 void	grid_destroy_windows(t_game *game, t_grid *grid)
@@ -82,7 +82,24 @@ void game_draw(t_game *game)
 		col = 0;
         while (col < game->size)
         {
-			draw_square(&game->grid.squares[row][col], 1);
+          draw_square(&game->grid.squares[row][col]);
+/*
+            int cell_x = 2 + col * 6;
+            int cell_y = 2 + row * 3;
+
+            mvwprintw(game->win_main, cell_y, cell_x, "+-----+");
+            mvwprintw(game->win_main, cell_y + 1, cell_x, "|     |");
+            mvwprintw(game->win_main, cell_y + 2, cell_x, "+-----+");
+
+			int value = game->grid.squares[row][col].value;
+
+			if (value != 0)
+			{
+				wattron(game->win_main, COLOR_PAIR(value));
+				mvwprintw(game->win_main, cell_y + 1, cell_x + 2, "%2d", value);
+				wattroff(game->win_main, COLOR_PAIR(value));
+			}
+      */			
 			col++;
         }
 		row++;
@@ -135,7 +152,6 @@ static void	game_wait_for_input(t_game *game)
 void	game_wait_for_input_and_update(t_game *game)
 {
 	static bool win_message_display = false;
-
 	while (!game->grid.grid_changed_after_move)
 	{
 		game_wait_for_input(game);
