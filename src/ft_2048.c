@@ -23,9 +23,9 @@ int main(void)
 
 			WINDOW *lose_message = newwin(6, 40, (LINES - 5) / 2, (COLS - 40) / 2);
 			box(lose_message, 0, 0);
-			mvwprintw(game.win_main, 2, 1, "NO MOVES POSSIBLE!");
-			mvwprintw(game.win_main, 3, 1, "Do you Wish to Restart? Press R");
-			mvwprintw(game.win_main, 4, 1, "To quit, Press Q");
+			mvwprintw(lose_message, 2, 1, "NO MOVES POSSIBLE!");
+			mvwprintw(lose_message, 3, 1, "Do you Wish to Restart? Press R");
+			mvwprintw(lose_message, 4, 1, "To quit, Press Q");
 
 			while (option != 'q' && option != 'Q' && option != 'r' && option != 'R')
 				option = getch();

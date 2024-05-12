@@ -14,6 +14,9 @@
   define  FAILURE !SUCCESS
 # endif
 
+# define SQUARE_HEIGHT 10
+# define SQUARE_WIDTH 10
+
 extern size_t sigResize;
 
 typedef enum e_game_status
@@ -46,6 +49,7 @@ typedef struct s_position
 typedef struct s_square
 {
 	int		value;
+	WINDOW	*win;
 	bool	merged;
 }			t_square;
 
@@ -72,6 +76,7 @@ void	game_draw(t_game *game);
 void	game_wait_for_input_and_update(t_game *game);
 
 // grid.c
+void	 grid_create_windows(t_game *game, t_grid *grid);
 void	grid_spawn_random_nr(t_grid *grid, int size);
 void	grid_slide_left(t_game *game, t_grid *grid);
 void	grid_slide_right(t_game *game, t_grid *grid);
