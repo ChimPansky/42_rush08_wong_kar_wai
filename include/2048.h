@@ -66,7 +66,7 @@ typedef struct s_game
 }			t_game;
 
 // game.c
-void	game_init(t_game *game);
+void	game_init(t_game *game, int size);
 void	game_destroy(t_game *game);
 void	game_draw(t_game *game);
 void	game_wait_for_input_and_update(t_game *game);
@@ -81,6 +81,7 @@ void	grid_slide_down(t_game *game, t_grid *grid);
 void 	check_neighbor_and_merge(t_game *game, t_grid *grid, t_position src, t_position dst);
 void	grid_copy(t_game *game, t_square src[5][5], t_square dst[5][5]);
 void	grid_reset_merged(t_game *game, t_grid *grid);
+void	grid_reset_values(t_game *game, t_grid *grid);
 bool	moves_are_possible(t_game *game);
 
 // position.c

@@ -190,3 +190,22 @@ void	grid_reset_merged(t_game *game, t_grid *grid)
 		cur.row++;
 	}
 }
+
+void	grid_reset_values(t_game *game, t_grid *grid)
+{
+	t_position	cur;
+
+	cur.row = 0;
+	cur.col = 0;
+	while (cur.row < game->size)
+	{
+		cur.col = 0;
+		while (cur.col < game->size)
+		{
+			grid->squares[cur.row][cur.col].value = 0;
+			cur.col++;
+		}
+		cur.row++;
+	}
+}
+
