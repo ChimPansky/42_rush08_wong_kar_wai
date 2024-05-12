@@ -28,23 +28,17 @@ void	game_init(t_game *game)
 	game->size = 4;
 
 	window_size_checker(game->size);
-	//int max_x, max_y;
 
-	//setlocale(LC_ALL, "");
 	game->win_main = initscr();
+	cbreak();	// disables line buffering, making input characters available immediately
+	noecho(); 	// don't echo any keypresses
+	keypad(stdscr, TRUE); 	// enable special keys
+	//setlocale(LC_ALL, "");
 	//curs_set(0);
-	noecho(); 				// for ncurses, don't echo any keypresses
-	keypad(stdscr, TRUE); 	// for ncurses, enable special keys
 	//timeout(0); 			// Set timeout for getch to non-blocking mode
 	//start_color();
 	//init_pair(1, COLOR_RED, COLOR_BLACK);
-	//getmaxyx(this->getMainWin(), max_y, max_x);
-	// if (max_y < (BATTLE_HEIGHT + STATS_HEIGHT) || max_x < SCREEN_WIDTH) {
-	// 	endwin();
-	// 	throw WrongWindowSizeException();
-	// }
-	// this->setStatsWin(subwin(this->getMainWin(), STATS_HEIGHT, SCREEN_WIDTH, 0, 0));
-	// this->setBattleWin(subwin(this->getMainWin(), BATTLE_HEIGHT, SCREEN_WIDTH, STATS_HEIGHT, 0));
+
 }
 
 void	game_destroy(t_game *game)
@@ -111,18 +105,31 @@ void handleResize(t_game *game)
 	refresh();
 }
 
+static void	game_wait_for_input(t_game *game)
+{
+	bool	valid_input = false;
+
+	while (!valid_input)
+	{
+		game->last_key = getch();
+		if (game->last_key == KEY_LEFT || game->last_key == KEY_RIGHT
+				|| game->last_key == KEY_UP || game->last_key == KEY_DOWN
+				|| game->last_key == 27)
+			valid_input = true;
+	}
+}
 void	game_wait_for_input_and_update(t_game *game)
 {
 	static bool win_message_display = false;
 
-	if (game->last_key == 27)
-	{
-		game->status = ABORTED;
-		return ;
-	}
 	while (!game->grid.grid_changed_after_move)
 	{
 		game_wait_for_input(game);
+		if (game->last_key == 27)
+		{
+			game->status = ABORTED;
+			return ;
+		}
 		if (game->last_key == KEY_LEFT)
 			grid_slide_left(game, &game->grid);
 		else if (game->last_key == KEY_RIGHT)
@@ -131,7 +138,7 @@ void	game_wait_for_input_and_update(t_game *game)
 			grid_slide_up(game, &game->grid);
 		else if (game->last_key == KEY_DOWN)
 			grid_slide_down(game, &game->grid);
-		
+
 		if (sigResize == 1)
 		{
 			handleResize(game);
@@ -151,34 +158,19 @@ void	game_wait_for_input_and_update(t_game *game)
 
 		while (option != 'q' && option != 'Q' && option != 'c' && option != 'C')
 			option = getch();
-		
+
 		if (option == 'q' || option == 'Q')
 			game->status = ABORTED;
 		else if (option == 'c' || option == 'C')
 			game->status = PLAYING;
-		
+
 		delwin(win_message);
 		win_message_display = true;
 	}
-
 	game->grid.grid_changed_after_move = false;
 	grid_reset_merged(game, &game->grid);
-
 }
 
-void	game_wait_for_input(t_game *game)
-{
-	bool	valid_input = false;
-
-	while (!valid_input)
-	{
-		game->last_key = getch();
-		if (game->last_key == KEY_LEFT || game->last_key == KEY_RIGHT
-				|| game->last_key == KEY_UP || game->last_key == KEY_DOWN
-				|| game->last_key == 27)
-		valid_input = true;
-	}
-}
 
 bool	moves_are_possible(t_game *game)
 {

@@ -70,7 +70,6 @@ void	game_init(t_game *game);
 void	game_destroy(t_game *game);
 void	game_draw(t_game *game);
 void	game_wait_for_input_and_update(t_game *game);
-void	game_wait_for_input(t_game *game);
 
 // grid.c
 void	grid_spawn_random_nr(t_grid *grid, int size);
