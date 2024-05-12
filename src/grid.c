@@ -38,7 +38,23 @@ void grid_create_windows(t_game *game, t_grid *grid)
 		row++;
 	}
 }
-// void grid_destroy_windows()...
+
+void	grid_destroy_windows(t_game *game, t_grid *grid)
+{
+	int	row = 0;
+	int	col = 0;
+
+	while (row < game->size)
+	{
+		col = 0;
+		while (col < game->size)
+		{
+			delwin(grid->squares[row][col].win);
+			col++;
+		}
+		row++;
+	}
+}
 
 static void	merge_squares(t_grid *grid, t_position src, t_position dst)
 {
@@ -160,17 +176,6 @@ void	grid_slide_down(t_game *game, t_grid *grid)
 	}
 }
 
-// void 	check_neighbor_and_merge(t_game *game, t_grid *grid, t_position src, t_position dst)
-// {
-// 	position_shift_by_one(&dst, game->last_key);
-// 	if (grid->squares[dst.row][dst.col].value == grid->squares[src.row][src.col].value)
-// 	{
-// 		grid->squares[dst.row][dst.col].value *= 2;
-// 		grid->squares[src.row][src.col].value = 0;
-// 		grid->grid_changed_after_move = true;
-// 	}
-// }
-
 void	grid_copy(t_game *game, t_square src[5][5], t_square dst[5][5])
 {
 	t_position	cur;
@@ -226,4 +231,3 @@ void	grid_reset_values(t_game *game, t_grid *grid)
 		cur.row++;
 	}
 }
-

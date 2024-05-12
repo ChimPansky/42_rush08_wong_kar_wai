@@ -6,7 +6,7 @@ void resizeHandler(int sig)
 	sigResize = 1;
 }
 
-bool  window_size_checker(int size) 
+bool  window_size_checker(int size)
 {
 	int max_x, max_y;
     getmaxyx(stdscr, max_y, max_x);
@@ -28,13 +28,13 @@ int game_menu(void)
 	option = 0;
 	while (option != '1' && option != '2' && option != '3')
 		option = getch();
-		
+
 	if (option == '1')
 		return (4);
 	else if (option == '2')
 		return (5);
 	else if (option == '3')
-		return (0);		
+		return (0);
 	return (0);
 }
 
@@ -53,7 +53,7 @@ int game_lose_menu()
 
 	while (option != 'q' && option != 'Q' && option != 'r' && option != 'R')
 		option = getch();
-			
+
 	delwin(lose_message);
 	if (option == 'q' || option == 'Q')
 		return (1);
@@ -64,7 +64,7 @@ int game_lose_menu()
 
 int main(void)
 {
-	int size = 0; 
+	int size = 0;
 	t_game game = {};
 
 	initscr();
@@ -80,7 +80,6 @@ int main(void)
 		size = game_menu();
 		if (size == 0)
 			break ;
-
 
 		//Window Size Checker
 		if(!window_size_checker(size))
@@ -117,7 +116,7 @@ int main(void)
 		game_draw(&game);
 		game_wait_for_input_and_update(&game);
 		grid_spawn_random_nr(&game.grid, game.size);
-		
+
 		}
 
 		if (game.status == ABORTED)
@@ -125,7 +124,6 @@ int main(void)
 
 	}
 	game_destroy(&game);
-
 	endwin();
 	return (SUCCESS);
 }
