@@ -81,6 +81,7 @@ int main(void)
 		if (size == 0)
 			break ;
 
+
 		//Window Size Checker
 		if(!window_size_checker(size))
 		{

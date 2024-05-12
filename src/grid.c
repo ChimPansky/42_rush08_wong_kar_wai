@@ -22,6 +22,24 @@ void	grid_spawn_random_nr(t_grid *grid, int size)
 	grid->squares[row][col].value = get_two_or_four();
 }
 
+void grid_create_windows(t_game *game, t_grid *grid)
+{
+	int	row = 0;
+	int	col = 0;
+
+	while (row < game->size)
+	{
+		col = 0;
+		while (col < game->size)
+		{
+			grid->squares[row][col].win = newwin(SQUARE_HEIGHT, SQUARE_WIDTH, row * SQUARE_HEIGHT, col * SQUARE_WIDTH);
+			col++;
+		}
+		row++;
+	}
+}
+// void grid_destroy_windows()...
+
 static void	merge_squares(t_grid *grid, t_position src, t_position dst)
 {
 	if (grid->squares[dst.row][dst.col].value == 0)

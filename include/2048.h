@@ -5,7 +5,6 @@
 # include <signal.h>
 # include <stdbool.h>
 # include "libft.h"
-# include "time.h"
 
 # ifndef SUCCESS
   define SUCCESS 0
@@ -13,6 +12,9 @@
 # ifndef FAILURE
   define  FAILURE !SUCCESS
 # endif
+
+# define SQUARE_HEIGHT 3
+# define SQUARE_WIDTH 5
 
 extern size_t sigResize;
 
@@ -46,6 +48,7 @@ typedef struct s_position
 typedef struct s_square
 {
 	int		value;
+	WINDOW	*win;
 	bool	merged;
 }			t_square;
 
@@ -58,7 +61,6 @@ typedef struct s_grid
 typedef struct s_game
 {
 	t_game_status	status;
-	WINDOW			*win_main;
 	t_grid			grid;
 	t_grid			check_grid;
 	int				size;
@@ -70,9 +72,10 @@ void	game_init(t_game *game, int size);
 void	game_destroy(t_game *game);
 void	game_draw(t_game *game);
 void	game_wait_for_input_and_update(t_game *game);
-void	game_wait_for_input(t_game *game);
 
 // grid.c
+void	grid_create_windows(t_game *game, t_grid *grid);
+void	grid_destroy_windows(t_game *game, t_grid *grid);
 void	grid_spawn_random_nr(t_grid *grid, int size);
 void	grid_slide_left(t_game *game, t_grid *grid);
 void	grid_slide_right(t_game *game, t_grid *grid);
@@ -88,5 +91,8 @@ bool	moves_are_possible(t_game *game);
 bool	position_is_equal(t_position pos1, t_position pos2);
 void	position_shift_by_one_reverse(t_position *pos, int direction);
 void	position_shift_by_one(t_position *pos, int direction);
+
+// ascii_art.c
+void	ascii_art_init(t_game *game);
 
 #endif
