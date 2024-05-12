@@ -4,13 +4,30 @@
 
 size_t sigResize = 0;
 
+void custom_colors()
+{
+	init_pair(2, 1, COLOR_BLACK);
+	init_pair(4, 2, COLOR_BLACK);
+	init_pair(8, 3, COLOR_BLACK);
+	init_pair(16, 4, COLOR_BLACK);
+	init_pair(32, 5, COLOR_BLACK);
+	init_pair(64, 6, COLOR_BLACK);
+	init_pair(128, 7, COLOR_BLACK);
+	init_pair(256, 1, COLOR_BLACK);
+	init_pair(512, 2, COLOR_BLACK);
+	init_pair(1024, 3, COLOR_BLACK);
+	init_pair(2048, 4, COLOR_BLACK);
+	init_pair(4096, 5, COLOR_BLACK);
+	init_pair(8192, 6, COLOR_BLACK);
+}
+
 void	game_init(t_game *game, int size)
 {
 	game->status = PLAYING;
 	game->size = size;
-	//int max_x, max_y;
 
-	//setlocale(LC_ALL, "");
+	start_color();
+	custom_colors();
 	game->win_main = initscr();
 	//curs_set(0);
 	noecho(); 				// for ncurses, don't echo any keypresses
@@ -53,8 +70,14 @@ void game_draw(t_game *game)
             mvwprintw(game->win_main, cell_y + 1, cell_x, "|     |");
             mvwprintw(game->win_main, cell_y + 2, cell_x, "+-----+");
 
-            if (game->grid.squares[row][col].value != 0)
-                mvwprintw(game->win_main, cell_y + 1, cell_x + 2, "%2d", game->grid.squares[row][col].value);
+			int value = game->grid.squares[row][col].value;
+
+			if (value != 0)
+			{
+				wattron(game->win_main, COLOR_PAIR(value));
+				mvwprintw(game->win_main, cell_y + 1, cell_x + 2, "%2d", value);
+				wattroff(game->win_main, COLOR_PAIR(value));
+			}
 			col++;
         }
 		row++;
@@ -100,6 +123,7 @@ void	game_wait_for_input_and_update(t_game *game)
 		game->status = ABORTED;
 		return ;
 	}
+
 	while (!game->grid.grid_changed_after_move)
 	{
 		game_wait_for_input(game);
