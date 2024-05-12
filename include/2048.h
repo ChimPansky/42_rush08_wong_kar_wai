@@ -103,7 +103,6 @@ void	grid_slide_left(t_game *game, t_grid *grid);
 void	grid_slide_right(t_game *game, t_grid *grid);
 void	grid_slide_up(t_game *game, t_grid *grid);
 void	grid_slide_down(t_game *game, t_grid *grid);
-void 	check_neighbor_and_merge(t_game *game, t_grid *grid, t_position src, t_position dst);
 void	grid_copy(t_game *game, t_square src[5][5], t_square dst[5][5]);
 void	grid_reset_merged(t_game *game, t_grid *grid);
 void	grid_reset_values(t_game *game, t_grid *grid);
@@ -114,7 +113,5 @@ bool	position_is_equal(t_position pos1, t_position pos2);
 void	position_shift_by_one_reverse(t_position *pos, int direction);
 void	position_shift_by_one(t_position *pos, int direction);
 
-// ascii_art.c
-void	ascii_art_init(t_game *game);
 
 #endif

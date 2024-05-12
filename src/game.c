@@ -45,26 +45,9 @@ void	game_init(t_game *game, int size)
 	init_pair(1, COLOR_BLACK, WHITE);
 	wattron(stdscr, COLOR_PAIR(1));
 	wbkgd(stdscr, COLOR_PAIR(1));
-    //box(square->win, 0, 0);
 	noecho(); 				// for ncurses, don't echo any keypresses
 	keypad(stdscr, TRUE); 	// for ncurses, enable special keys
 	grid_create_windows(game, &game->grid);
-}
-void	grid_destroy_windows(t_game *game, t_grid *grid)
-{
-	int	row = 0;
-	int	col = 0;
-
-	while (row < game->size)
-	{
-		col = 0;
-		while (col < game->size)
-		{
-			delwin(grid->squares[row][col].win);
-			col++;
-		}
-		row++;
-	}
 }
 
 void	game_destroy(t_game *game)
@@ -96,8 +79,6 @@ void game_draw(t_game *game)
     int row, col;
     clear();
 
-    //box(stdscr, 0, 0);
-
 	row = col = 0;
     while (row < game->size)
     {
@@ -105,30 +86,12 @@ void game_draw(t_game *game)
         while (col < game->size)
         {
           draw_square(&game->grid.squares[row][col]);
-/*
-            int cell_x = 2 + col * 6;
-            int cell_y = 2 + row * 3;
-
-            mvwprintw(game->win_main, cell_y, cell_x, "+-----+");
-            mvwprintw(game->win_main, cell_y + 1, cell_x, "|     |");
-            mvwprintw(game->win_main, cell_y + 2, cell_x, "+-----+");
-
-			int value = game->grid.squares[row][col].value;
-
-			if (value != 0)
-			{
-				wattron(game->win_main, COLOR_PAIR(value));
-				mvwprintw(game->win_main, cell_y + 1, cell_x + 2, "%2d", value);
-				wattroff(game->win_main, COLOR_PAIR(value));
-			}
-      */
 			col++;
         }
 		row++;
     }
 	row = col = 0;
 }
-
 
 bool checks_win_condition(t_game *game)
 {
@@ -223,7 +186,6 @@ void	game_wait_for_input_and_update(t_game *game)
 	grid_reset_merged(game, &game->grid);
 }
 
-
 bool	moves_are_possible(t_game *game)
 {
 	grid_copy(game, game->grid.squares, game->check_grid.squares);
@@ -240,30 +202,3 @@ bool	moves_are_possible(t_game *game)
 		return (true);
 	return (false);
 }
-
-/*
-bool checks_win_condition(t_game *game)
-{
-	int row;
-	int col;
-
-	row = 0;
-	col = 0;
-	while (row < game->size)
-
-	if (game->last_key == KEY_LEFT)
-		grid_slide_left(game);
-	else if (game->last_key == KEY_RIGHT)
-		grid_slide_right(game);
-	else if (game->last_key == KEY_UP)
-		grid_slide_up(game);
-	else if (game->last_key == KEY_DOWN)
-		grid_slide_down(game);
-
-	if (checks_win_condition(game) == true)
-	{
-		game->status = ABORTED;
-		return ;
-	}
-	grid_check_for_collisions_and_merge(game);
-}*/
